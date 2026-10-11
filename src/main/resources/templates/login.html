@@ -1,0 +1,3 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"><head th:replace="~{fragments :: head('Log in')}"></head><body><nav th:replace="~{fragments :: nav}"></nav><main>
+<form th:action="@{/login}" method="post" class="box narrow"><h1>Log in</h1><p class="err" th:if="${param.error}">Wrong email or password. Check both and try again.</p>
+<label>Email</label><input name="username" type="email" required><label>Password</label><input name="password" type="password" required><button class="p">Log in</button><p>New here? <a th:href="@{/register}">Create an account</a></p></form></main></body></html>

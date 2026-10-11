@@ -1,0 +1,13 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"><head th:replace="~{fragments :: head('Claim chat')}"></head><body><nav th:replace="~{fragments :: nav}"></nav><main>
+<p><a th:href="@{/my}">Back to my activity</a></p>
+<div class="box"><span class="st" th:classappend="'s-'+${claim.status}" th:text="${#strings.capitalize(#strings.toLowerCase(claim.status))}"></span>
+<h2 style="margin-top:10px">Claim on <a th:href="@{/items/{id}(id=${claim.item.id})}" th:text="${claim.item.title}"></a></h2>
+<p class="meta">Item is now: <b th:text="${claim.item.heldAt!=null} ? ${claim.item.heldAt} : 'With the person who lost it, no item yet'"></b></p>
+<p class="meta">Sent by <b th:text="${claim.claimant.name}"></b>. Item posted by <b th:text="${claim.item.owner.name}"></b>.</p>
+<p><b>First message:</b> <span th:text="${claim.message}"></span></p><p th:if="${claim.adminNote}"><b>Decision note:</b> <span th:text="${claim.adminNote}"></span></p></div><br>
+<form th:if="${canDecide}" th:action="@{/claims/{id}/approve(id=${claim.id})}" method="post" class="box"><h3>Is the proof right?</h3><p class="note">Ask more questions in chat first if you are not sure.</p>
+<input name="note" placeholder="Pickup note, e.g. Library desk at 4pm, bring student ID"><div class="acts"><button class="p">Approve claim</button><button class="p r" th:formaction="@{/claims/{id}/reject(id=${claim.id})}">Reject claim</button></div></form>
+<form th:if="${canReceive}" th:action="@{/items/{id}/received(id=${claim.item.id})}" method="post" class="box" style="margin-top:12px"><h3>Got it back?</h3><p class="note">Confirm only after the item is in the owner's hands. This closes the case.</p><button class="p">Confirm item received</button></form>
+<h3 style="margin-top:22px">Chat</h3><div class="box" style="margin-bottom:8px" th:each="x:${messages}"><b th:text="${x.sender.name}"></b> <span class="note" th:text="${#temporals.format(x.createdAt,'dd MMM, HH:mm')}"></span><p style="margin:4px 0 0" th:text="${x.text}"></p></div>
+<p th:if="${#lists.isEmpty(messages)}" class="note">No messages yet. Ask a question or agree a time and place to meet.</p>
+<form th:action="@{/claims/{id}/chat(id=${claim.id})}" method="post" class="box"><label>Write a message</label><textarea name="text" required></textarea><button class="p">Send message</button></form></main></body></html>

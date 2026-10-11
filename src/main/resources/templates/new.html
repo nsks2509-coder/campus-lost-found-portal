@@ -1,0 +1,7 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"><head th:replace="~{fragments :: head('Post item')}"></head><body><nav th:replace="~{fragments :: nav}"></nav><main>
+<form th:action="@{/items}" method="post" enctype="multipart/form-data" class="box narrow" style="max-width:600px"><h1>Post an item</h1>
+<label>Did you lose it or find it?</label><select name="type"><option value="LOST">I lost it</option><option value="FOUND">I found it</option></select>
+<label>Title</label><input name="title" required placeholder="Black leather wallet"><label>Description</label><textarea name="description" required placeholder="Colour, brand, marks. Keep one detail to yourself so the real owner can prove it."></textarea>
+<label>Category</label><select name="category"><option th:each="c:${cats}" th:text="${c}"></option></select><label>Where was it lost or found?</label><input name="location" required placeholder="Library, second floor">
+<label>Date</label><input type="date" name="eventDate" required><label>If you found it, where is it now?</label><select name="heldAt"><option value="">Not applicable, I lost it</option><option>With me, the finder</option><option>Handed to the Security Office</option><option>Handed to the department office</option></select>
+<label>Photo (optional)</label><input type="file" name="photo" accept="image/*"><button class="p">Post item</button></form></main></body></html>

@@ -1,0 +1,5 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"><head th:replace="~{fragments :: head('Returned items')}"></head><body><nav th:replace="~{fragments :: nav}"></nav><main>
+<h2>Items reunited with their owners</h2><p class="meta">Closed cases move here and no longer appear on the main board.</p>
+<div class="grid"><a class="tag" th:each="i:${items}" th:href="@{/items/{id}(id=${i.id})}"><div class="tag-top s-RETURNED"><span th:text="${i.typeLabel()}"></span><span class="hole"></span><span>Returned</span></div>
+<div class="tag-body"><h3 th:text="${i.title}"></h3><small th:text="${i.category}+', returned on '+${#temporals.format(i.returnedAt,'dd MMM yyyy')}"></small></div></a></div>
+<div class="box" th:if="${#lists.isEmpty(items)}"><h3>No returned items yet</h3><p>Once an admin marks an item as handed over, it appears here.</p></div></main></body></html>

@@ -1,0 +1,13 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"><head th:replace="~{fragments :: head('My activity')}"></head><body><nav th:replace="~{fragments :: nav}"></nav><main>
+<h2>Claims on my items</h2><p class="note">You hold these items or posted them, so you check the proof.</p><table><tr><th>Item</th><th>From</th><th>Message</th><th>Open</th></tr>
+<tr th:each="c:${incoming}"><td th:text="${c.item.title}"></td><td th:text="${c.claimant.name}"></td><td th:text="${c.message}"></td><td><a class="btn" th:href="@{/claims/{id}(id=${c.id})}">Review and chat</a></td></tr>
+<tr th:if="${#lists.isEmpty(incoming)}"><td colspan="4">No claims need your decision.</td></tr></table>
+<h2>Items I posted</h2><table><tr><th>Item</th><th>Type</th><th>Status</th><th>Next step</th></tr><tr th:each="i:${items}"><td><a th:href="@{/items/{id}(id=${i.id})}" th:text="${i.title}"></a></td><td th:text="${i.typeLabel()}"></td><td><span class="st" th:classappend="'s-'+${i.status}" th:text="${i.statusLabel()}"></span></td>
+<td><a th:if="${approved[i.id]!=null}" th:href="@{/claims/{id}(id=${approved[i.id].id})}">Open chat</a>
+<form th:if="${i.type=='LOST' and i.status=='VERIFIED'}" th:action="@{/items/{id}/received(id=${i.id})}" method="post"><button class="p">I got my item back</button></form>
+<form th:if="${i.status=='OPEN'}" th:action="@{/items/{id}/close(id=${i.id})}" method="post"><button class="p r">Close report</button></form></td></tr>
+<tr th:if="${#lists.isEmpty(items)}"><td colspan="4">You have not posted anything yet.</td></tr></table>
+<h2>My claims</h2><table><tr><th>Item</th><th>My message</th><th>Decision</th><th>Next step</th></tr><tr th:each="c:${claims}"><td><a th:href="@{/items/{id}(id=${c.item.id})}" th:text="${c.item.title}"></a></td><td th:text="${c.message}"></td><td><span class="st" th:classappend="'s-'+${c.status}" th:text="${#strings.capitalize(#strings.toLowerCase(c.status))}"></span></td>
+<td><span th:if="${c.status=='APPROVED' and c.item.heldAt}">Item is at: <b th:text="${c.item.heldAt}"></b>. </span><span th:text="${c.adminNote}"></span> <a th:href="@{/claims/{id}(id=${c.id})}">Open chat</a>
+<form th:if="${c.status=='APPROVED' and c.item.type=='FOUND' and c.item.status=='VERIFIED'}" th:action="@{/items/{id}/received(id=${c.item.id})}" method="post"><button class="p">I got my item back</button></form></td></tr>
+<tr th:if="${#lists.isEmpty(claims)}"><td colspan="4">You have not sent any claim.</td></tr></table></main></body></html>

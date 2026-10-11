@@ -1,0 +1,15 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"><head th:replace="~{fragments :: head('Admin desk')}"></head><body><nav th:replace="~{fragments :: nav}"></nav><main>
+<h2>Office claims waiting for review</h2><p class="note">Only items handed to an office appear here. Items held by a finder are checked by the finder.</p>
+<table><tr><th>Item</th><th>Claimant</th><th>Proof</th><th>Decision</th></tr>
+<tr th:each="c:${claims}"><td><a th:href="@{/items/{id}(id=${c.item.id})}" th:text="${c.item.title}"></a><br><small th:text="${c.item.heldAt}"></small></td><td th:text="${c.claimant.name}+' ('+${c.claimant.email}+')'"></td><td th:text="${c.message}"></td>
+<td><form th:action="@{/admin}" method="post"><input name="note" placeholder="Note, e.g. Security Office, 10am to 4pm, bring ID" style="width:100%;padding:8px;margin-bottom:8px"><div class="acts"><button class="p" th:formaction="@{/claims/{id}/approve(id=${c.id})}">Approve claim</button><button class="p r" th:formaction="@{/claims/{id}/reject(id=${c.id})}">Reject claim</button><a th:href="@{/claims/{id}(id=${c.id})}">Chat</a></div></form></td></tr>
+<tr th:if="${#lists.isEmpty(claims)}"><td colspan="4">No office claims to review.</td></tr></table>
+<h2>Verified, waiting for pickup at the office</h2><table><tr><th>Item</th><th>Verified claimant</th><th>Note</th><th>Handover</th></tr>
+<tr th:each="i:${ready}"><td><a th:href="@{/items/{id}(id=${i.id})}" th:text="${i.title}"></a></td><td th:text="${approved[i.id]?.claimant?.name}+' ('+${approved[i.id]?.claimant?.email}+')'"></td><td th:text="${approved[i.id]?.adminNote}"></td>
+<td><form th:action="@{/items/{id}/received(id=${i.id})}" method="post"><button class="p">Record handover</button></form></td></tr>
+<tr th:if="${#lists.isEmpty(ready)}"><td colspan="4">Nothing waiting at the office.</td></tr></table>
+<h2 th:text="'Open for more than '+${days}+' days'"></h2><table><tr><th>Item</th><th>Type</th><th>Posted</th><th>Action</th></tr>
+<tr th:each="i:${stale}"><td><a th:href="@{/items/{id}(id=${i.id})}" th:text="${i.title}"></a></td><td th:text="${i.typeLabel()}"></td><td th:text="${#temporals.format(i.createdAt,'dd MMM yyyy')}"></td>
+<td><form th:action="@{/admin/items/{id}/expire(id=${i.id})}" method="post"><button class="p r">Close as unclaimed</button></form></td></tr>
+<tr th:if="${#lists.isEmpty(stale)}"><td colspan="4">No old open reports.</td></tr></table>
+<p><a th:href="@{/history}">See all returned items</a></p></main></body></html>

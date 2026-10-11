@@ -1,0 +1,58 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(t)"><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title th:text="${t}+' | Campus Lost and Found'"></title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef2f5;--ink:#12263a;--mut:#5b6b7a;--teal:#0f5c63;--amber:#f2b134;--lost:#c8374a;--found:#1f8a5f;--line:#d5dde5}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 'Instrument Sans',system-ui,sans-serif}
+h1,h2,h3{font-family:'Bricolage Grotesque','Instrument Sans',sans-serif;line-height:1.15;margin:0 0 .5em}
+a{color:var(--teal)}
+nav{background:#fff;border-bottom:1px solid var(--line);padding:12px 24px;display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+nav a,nav button{color:var(--ink);text-decoration:none;font:inherit;font-weight:500;background:none;border:0;cursor:pointer;padding:0}
+nav a:hover,nav button:hover{color:var(--teal)}
+.brand{display:flex;align-items:center;gap:10px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.15rem}
+.brand i{width:22px;height:28px;background:var(--amber);border-radius:4px 4px 8px 8px;position:relative}
+.brand i::after{content:"";position:absolute;top:5px;left:50%;margin-left:-3px;width:6px;height:6px;border-radius:50%;background:#fff}
+.sp{flex:1}
+.btn,.p{display:inline-block;background:var(--teal);color:#fff!important;border:0;padding:10px 18px;border-radius:8px;font:inherit;font-weight:600;cursor:pointer;text-decoration:none}
+.btn:hover,.p:hover{background:#0b474d}
+.r{background:var(--lost)}.r:hover{background:#a52b3b}
+.hero{background:var(--teal);color:#fff;padding:44px 24px 52px}
+.hero>div,main{max-width:1040px;margin:0 auto}
+main{padding:28px 20px 60px}
+.hero h1{font-size:clamp(1.9rem,4.5vw,3rem);max-width:15em}
+.hero p{margin:0 0 22px;color:#cfe6e8;max-width:34em}
+.search{display:flex;gap:8px;flex-wrap:wrap;background:#fff;padding:8px;border-radius:12px}
+.search input,.search select{flex:1 1 150px;border:1px solid var(--line);border-radius:8px;padding:10px;font:inherit;color:var(--ink);background:#fff}
+.search input{flex:2 1 220px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:20px}
+.tag{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;text-decoration:none;color:inherit;display:block}
+.tag:hover{border-color:var(--teal)}
+.tag-top{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;font-size:.85rem;font-weight:600}
+.tag-top.LOST{background:#fbe9ec;color:var(--lost)}.tag-top.FOUND{background:#e2f4ec;color:var(--found)}
+.hole{width:12px;height:12px;border-radius:50%;background:var(--bg);border:1px solid var(--line)}
+.tag img,.ph{width:100%;height:150px;object-fit:cover;display:block}
+.ph{background:repeating-linear-gradient(45deg,#f3f6f8,#f3f6f8 10px,#e9eef2 10px,#e9eef2 20px);display:flex;align-items:center;justify-content:center;color:var(--mut);font-weight:600}
+.tag-body{padding:12px}.tag-body h3{font-size:1.1rem;margin:0 0 4px}.tag-body small{color:var(--mut)}
+.st{padding:2px 10px;border-radius:99px;font-size:.78rem;font-weight:600;background:#e8edf2;display:inline-block}
+.s-OPEN{background:#fff3d6;color:#8a5a00}.s-CLAIM_PENDING,.s-PENDING{background:#e3ecff;color:#2a4fa8}.s-RETURNED,.s-APPROVED{background:#e2f4ec;color:var(--found)}.s-REJECTED{background:#fbe9ec;color:var(--lost)}
+.box{background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px}
+label{display:block;font-weight:600;font-size:.9rem;margin:0 0 4px}
+.box input,.box select,.box textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;font:inherit;margin-bottom:14px;background:#fff}
+textarea{min-height:90px}
+:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.narrow{max-width:420px;margin:20px auto}.err{color:var(--lost);font-weight:500}
+table{width:100%;background:#fff;border:1px solid var(--line);border-radius:12px;border-collapse:separate;border-spacing:0;overflow:hidden;margin-bottom:28px}
+th,td{padding:12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f6f8fa;font-size:.85rem;color:var(--mut)}tr:last-child td{border-bottom:0}
+.detail{display:grid;grid-template-columns:1fr 1fr;gap:24px}@media(max-width:760px){.detail{grid-template-columns:1fr}}
+.detail img,.detail .ph{height:320px;border-radius:12px;border:1px solid var(--line)}
+.track{display:flex;margin:16px 0}.track span{flex:1;text-align:center;padding:8px 4px;font-size:.85rem;background:#e8edf2;color:var(--mut);font-weight:600}
+.track span:first-child{border-radius:8px 0 0 8px}.track span:last-child{border-radius:0 8px 8px 0}.track .on{background:var(--teal);color:#fff}
+.meta{color:var(--mut);margin:0 0 6px}.acts{display:flex;gap:8px}
+.s-VERIFIED{background:#efe6ff;color:#5b34a8}.s-CLOSED{background:#e8edf2;color:var(--mut)}.tl{list-style:none;padding:0;border-left:2px solid var(--line);margin:0 0 0 6px}.tl li{padding:0 0 12px 14px;position:relative}.tl li::before{content:"";position:absolute;left:-6px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--teal)}.tl b{display:block;font-size:.8rem;color:var(--mut)}.note{font-size:.9rem;color:var(--mut)}</style></head>
+<body><nav th:fragment="nav"><a class="brand" th:href="@{/}"><i></i>Campus Lost and Found</a><a th:href="@{/}">Browse</a><a th:href="@{/history}">Returned items</a>
+<a sec:authorize="isAuthenticated()" th:href="@{/my}">My activity</a><a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}">Verify claims</a><span class="sp"></span>
+<a sec:authorize="isAuthenticated()" class="btn" th:href="@{/items/new}">Post item</a>
+<a sec:authorize="!isAuthenticated()" th:href="@{/login}">Log in</a><a sec:authorize="!isAuthenticated()" class="btn" th:href="@{/register}">Create account</a>
+<form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post"><button>Log out</button></form></nav></body></html>
