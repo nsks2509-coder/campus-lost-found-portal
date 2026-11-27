@@ -1,71 +1,81 @@
-# Campus Lost & Found Portal
+# Campus Lost and Found Portal
 
-A Spring Boot application for reporting lost and found items, submitting ownership claims, and coordinating safe returns on campus.
-
-## Features
-
-- Student registration and sign-in with BCrypt password hashing
-- Searchable lost and found reports with category filters
-- Ownership claims, private conversations, and status history
-- Admin queue for claims and ageing reports
-- Optional item photos
-- H2 for local development; PostgreSQL-compatible configuration for deployment
+A Spring Boot, Thymeleaf, Spring Security, and Spring Data JPA application for campus lost-and-found reports.
 
 ## Requirements
-
-- Java 17
+- JDK 17+
 - Maven 3.9+
 - Docker (optional)
 
 ## Run locally
 
-```bash
+PowerShell:
+```powershell
+$env:ADMIN_EMAIL = "admin@your-campus.edu"
+$env:ADMIN_PASSWORD = "use-a-unique-password-of-at-least-12-characters"
+$env:ADMIN_NAME = "Campus Administrator"
 mvn spring-boot:run
 ```
 
-Open [http://localhost:8080](http://localhost:8080) and register a student account. The application creates a local H2 database under `./data` by default.
-
-## Administrator setup
-
-There is no built-in administrator account or default password. To create or rotate an administrator, set both environment variables before starting the app:
-
-```text
-APP_ADMIN_EMAIL=admin@example.edu
-APP_ADMIN_PASSWORD=<a unique password with at least 12 characters>
+Linux/macOS:
+```bash
+export ADMIN_EMAIL="admin@your-campus.edu"
+export ADMIN_PASSWORD="use-a-unique-password-of-at-least-12-characters"
+export ADMIN_NAME="Campus Administrator"
+mvn spring-boot:run
 ```
 
-When both are set, startup creates the account if needed and applies the supplied password and administrator role. Keep the password in your hosting provider's secret settings; never commit it to the repository. Existing deployments should configure these variables before restarting so any previously seeded account receives a new password.
+Open http://localhost:8080. Students can register at `/register`.
+
+**There is no default administrator password.** Set both `ADMIN_EMAIL` and `ADMIN_PASSWORD` in your environment or hosting provider before deployment. The password must be at least 12 characters. On an existing database, the old sample administrator account is disabled when the new credentials are not configured; set the environment variables to provision the administrator account you intend to use.
 
 ## Configuration
 
 | Variable | Default | Purpose |
-| --- | --- | --- |
-| `DB_URL` | `jdbc:h2:file:./data/lostfound` | JDBC connection URL |
-| `DB_USER` | `sa` | Database user |
-| `DB_PASS` | empty | Database password |
+|---|---|---|
 | `PORT` | `8080` | HTTP port |
-| `APP_ADMIN_EMAIL` | empty | Optional administrator bootstrap email |
-| `APP_ADMIN_PASSWORD` | empty | Optional administrator bootstrap password (12+ characters) |
+| `DB_URL` | `jdbc:h2:file:./data/lostfound` | JDBC connection URL |
+| `DB_USER` | `sa` | Database username |
+| `DB_PASS` | empty | Database password |
+| `ADMIN_EMAIL` | empty | Administrator login email |
+| `ADMIN_PASSWORD` | empty | Administrator password (minimum 12 characters) |
+| `ADMIN_NAME` | `Campus Administrator` | Display name for the provisioned administrator |
+| `APP_EXPIRY_DAYS` | `30` | Age threshold for stale reports |
+| `APP_UPLOAD_MAX_BYTES` | `5242880` | Maximum image upload size in bytes |
+| `APP_UPLOAD_MAX_SIZE` | `5MB` | Spring multipart request limit |
+| `LEGACY_ADMIN_EMAIL` | legacy sample account email | Account to disable on older databases when no admin credentials are configured |
 
-For a hosted deployment, use PostgreSQL and persistent storage for the database and uploaded photos. The included Dockerfile builds the Spring Boot application:
+An example environment file is provided in `.env.example`. Do not commit real passwords or database secrets.
+
+## Features
+- Lost/found item reports and search by title, description, or location
+- Item image uploads validated as JPEG, PNG, or GIF
+- Claim submission with proof messages
+- Claim review, private claimant/finder chat, and handover status
+- Student accounts and administrator workflow
+- H2 file database for local demonstration
+
+## Tests
+
+```bash
+mvn -B verify
+```
+
+## Docker
 
 ```bash
 docker build -t campus-lost-found .
-docker run --rm -p 8080:8080 campus-lost-found
+docker run --rm -p 8080:8080 \
+  -e ADMIN_EMAIL="admin@your-campus.edu" \
+  -e ADMIN_PASSWORD="use-a-unique-password-of-at-least-12-characters" \
+  campus-lost-found
 ```
 
-Pass database and administrator settings through your host's secret/environment configuration.
+For deployment, persist both the database directory and `uploads/`; the container filesystem may be ephemeral. Configure a managed database and private object storage for production.
 
-## Main flows
-
-1. Register or sign in.
-2. Post a lost or found report, optionally with a photo.
-3. Submit an ownership claim with identifying proof.
-4. Coordinate in the claim conversation.
-5. Confirm the return to close the case.
-
-Administrators can review reports and claims through the protected admin area.
-
-## Production notes
-
-This repository is a project/demo implementation. Before using it with real campus data, configure HTTPS, PostgreSQL backups and persistent file storage, review upload validation and retention, and replace schema auto-update with managed database migrations. Rotate any credentials used by an earlier deployment.
+## Security and production notes
+- Administrator credentials are provisioned from environment variables, not source code.
+- Registration normalizes email addresses, bounds input lengths, and requires stronger passwords.
+- Image files are decoded, dimension-limited, re-encoded, and assigned generated filenames; declared MIME types and user filenames are not trusted.
+- Keep HTTPS enabled at the hosting layer.
+- Before using real student information, add rate limiting, email verification, audit retention controls, backup/restore procedures, and production-grade database and object storage. Review campus privacy requirements before exposing contact details.
