@@ -30,8 +30,8 @@ Open [http://localhost:8080](http://localhost:8080) and register a student accou
 There is no built-in administrator account or default password. To create or rotate an administrator, set both environment variables before starting the app:
 
 ```text
-ADMIN_EMAIL=admin@example.edu
-ADMIN_PASSWORD=<a unique password with at least 12 characters>
+APP_ADMIN_EMAIL=admin@example.edu
+APP_ADMIN_PASSWORD=<a unique password with at least 12 characters>
 ```
 
 When both are set, startup creates the account if needed and applies the supplied password and administrator role. Keep the password in your hosting provider's secret settings; never commit it to the repository. Existing deployments should configure these variables before restarting so any previously seeded account receives a new password.
@@ -44,8 +44,8 @@ When both are set, startup creates the account if needed and applies the supplie
 | `DB_USER` | `sa` | Database user |
 | `DB_PASS` | empty | Database password |
 | `PORT` | `8080` | HTTP port |
-| `ADMIN_EMAIL` | empty | Optional administrator bootstrap email |
-| `ADMIN_PASSWORD` | empty | Optional administrator bootstrap password (12+ characters) |
+| `APP_ADMIN_EMAIL` | empty | Optional administrator bootstrap email |
+| `APP_ADMIN_PASSWORD` | empty | Optional administrator bootstrap password (12+ characters) |
 
 For a hosted deployment, use PostgreSQL and persistent storage for the database and uploaded photos. The included Dockerfile builds the Spring Boot application:
 
