@@ -3,13 +3,24 @@ package com.campus.lostfound;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+@Import(ItemRepositoryTest.TestConfig.class)
 class ItemRepositoryTest {
+  @TestConfiguration
+  static class TestConfig {
+    @Bean PasswordEncoder testPasswordEncoder() { return new BCryptPasswordEncoder(); }
+  }
+
   @Autowired private ItemRepository items;
 
   @Test
